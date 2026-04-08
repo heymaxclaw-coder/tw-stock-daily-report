@@ -1,0 +1,4 @@
+# 台股分析系統依賴
+# 本專案使用 Python 內建 urllib，無需額外套件
+# 但 GitHub Actions 需要一個空的或最小化的 requirements
+urllib3>=1.26.0
