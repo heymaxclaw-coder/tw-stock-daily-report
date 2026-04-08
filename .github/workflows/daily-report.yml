@@ -1,0 +1,55 @@
+name: 台股每日技術分析報告
+
+on:
+  schedule:
+    # 每天 08:30 台灣時間 (00:30 UTC)
+    - cron: '30 0 * * *'
+  workflow_dispatch:  # 手動觸發
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests python-dotenv
+      
+      - name: Run scraper
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        run: |
+          cd scripts
+          python scrape.py
+      
+      - name: Run analyzer
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        run: |
+          cd scripts
+          python analyze.py
+      
+      - name: Generate HTML
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        run: |
+          cd scripts
+          python generate_html.py
+      
+      - name: Commit and push
+        run: |
+          git config --local user.email "openclaw@heymaxclaw"
+          git config --local user.name "OpenClaw Bot"
+          git add -A
+          git diff --staged --quiet || git commit -m "Update daily report: $(date +'%Y-%m-%d %H:%M')"
+          git push
