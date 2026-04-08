@@ -1,14 +1,23 @@
 name: 台股每日技術分析報告
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 on:
   schedule:
     # 每天 08:30 台灣時間 (00:30 UTC)
     - cron: '30 0 * * 1-5'
   workflow_dispatch:  # 手動觸發
+  push:  # 每次 push 都生成報告
 
 jobs:
   generate-report:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
       - name: Checkout repo
@@ -37,3 +46,12 @@ jobs:
           git add -A
           git diff --staged --quiet && echo "No changes" || git commit -m "Update daily report: $(date +'%Y-%m-%d %H:%M')"
           git push
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
