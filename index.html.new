@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>台股技術精選 2026年04月09日</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #0f3460;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 { font-size: 1.4em; color: #fff; margin-bottom: 8px; }
+        .header .date { color: #94a3b8; font-size: 0.85em; }
+        
+        .intro {
+            background: rgba(59,130,246,0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #93c5fd;
+        }
+        
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        .section-title { font-size: 1em; color: #fff; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        .stock-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 14px;
+            border-left: 3px solid #3b82f6;
+            margin-bottom: 12px;
+        }
+        .stock-card.bullish { border-left-color: #22c55e; }
+        .stock-card.bearish { border-left-color: #ef4444; }
+        .stock-card.neutral { border-left-color: #eab308; }
+        
+        .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+        .stock-name { font-size: 1em; font-weight: bold; color: #fff; }
+        .stock-code { color: #64748b; font-size: 0.8em; margin-left: 6px; }
+        .sector-tag { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; margin-left: 8px; }
+        .stock-price { font-size: 1.1em; font-weight: bold; color: #fff; }
+        .stock-change { font-size: 0.8em; margin-left: 8px; }
+        .positive { color: #ef4444; }
+        .negative { color: #22c55e; }
+        
+        .signals { margin: 10px 0; }
+        .signal-tag { background: rgba(34,197,94,0.2); color: #86efac; padding: 3px 8px; border-radius: 4px; font-size: 0.75em; margin-right: 6px; display: inline-block; }
+        
+        .stock-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+        .metric { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; text-align: center; }
+        .metric-label { color: #64748b; font-size: 0.65em; margin-bottom: 3px; }
+        .metric-value { color: #fff; font-weight: 600; font-size: 0.85em; }
+        
+        .recommendation { padding: 8px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85em; display: inline-block; }
+        .recommendation.bullish { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .recommendation.bearish { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .recommendation.neutral { background: rgba(234,179,8,0.2); color: #eab308; }
+        
+        .footer { text-align: center; padding: 20px 0; color: #64748b; font-size: 0.75em; }
+        .footer a { color: #3b82f6; text-decoration: none; }
+        
+        @media (max-width: 480px) {
+            body { padding: 8px; font-size: 13px; }
+            .header h1 { font-size: 1.2em; }
+            .stock-metrics { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 台股技術精選</h1>
+            <div class="date">2026年04月09日 09:36 更新</div>
+        </div>
+        
+        <div class="intro">
+            🎯 根據 KD 黃金交叉、MACD 多頭、均線排列、量能放大等技術指標，每日自動篩選 5 支強勢股。
+        </div>
+        
+        <div class="section">
+            <div class="section-title">📈 今日技術精選 Top 5</div>
+            
+    <div class="stock-card bullish">
+        <div class="stock-header">
+            <div>
+                <span class="stock-name">京元電</span>
+                <span class="stock-code">(3413)</span>
+                <span class="sector-tag">半導體</span>
+            </div>
+            <div>
+                <span class="stock-price">308.50</span>
+                <span class="stock-change positive">+6.50%</span>
+            </div>
+        </div>
+        <span class='signal-tag'>KD黃金交叉</span> <span class='signal-tag'>量增(1.8x)</span> <span class='signal-tag'>動能(+2.2%)</span>
+        <div class="stock-metrics">
+        <div class="metric">
+            <div class="metric-label">KD</div>
+            <div class="metric-value">K=36.0 D=31.1</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA20</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA60</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">支撐/壓力</div>
+            <div class="metric-value">0.0 / 0.0</div>
+        </div></div>
+        <div class="recommendation bullish">🟡 中性（技術面無明顯方向）</div>
+    </div>
+    <div class="stock-card bullish">
+        <div class="stock-header">
+            <div>
+                <span class="stock-name">聯詠</span>
+                <span class="stock-code">(3034)</span>
+                <span class="sector-tag">IC設計</span>
+            </div>
+            <div>
+                <span class="stock-price">399.50</span>
+                <span class="stock-change positive">+8.00%</span>
+            </div>
+        </div>
+        <span class='signal-tag'>KD黃金交叉</span> <span class='signal-tag'>動能(+2.0%)</span>
+        <div class="stock-metrics">
+        <div class="metric">
+            <div class="metric-label">KD</div>
+            <div class="metric-value">K=66.1 D=53.9</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA20</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA60</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">支撐/壓力</div>
+            <div class="metric-value">0.0 / 0.0</div>
+        </div></div>
+        <div class="recommendation bullish">🟡 輕偏多（KD偏多）</div>
+    </div>
+    <div class="stock-card bullish">
+        <div class="stock-header">
+            <div>
+                <span class="stock-name">華票</span>
+                <span class="stock-code">(3010)</span>
+                <span class="sector-tag">金融</span>
+            </div>
+            <div>
+                <span class="stock-price">128.50</span>
+                <span class="stock-change positive">+2.00%</span>
+            </div>
+        </div>
+        <span class='signal-tag'>KD黃金交叉</span> <span class='signal-tag'>動能(+1.6%)</span>
+        <div class="stock-metrics">
+        <div class="metric">
+            <div class="metric-label">KD</div>
+            <div class="metric-value">K=70.2 D=52.6</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA20</div>
+            <div class="metric-value">126.88</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA60</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">支撐/壓力</div>
+            <div class="metric-value">115.0 / 142.0</div>
+        </div></div>
+        <div class="recommendation bullish">🟡 中性（技術面無明顯方向）</div>
+    </div>
+    <div class="stock-card bullish">
+        <div class="stock-header">
+            <div>
+                <span class="stock-name">聯電</span>
+                <span class="stock-code">(2303)</span>
+                <span class="sector-tag">半導體</span>
+            </div>
+            <div>
+                <span class="stock-price">60.00</span>
+                <span class="stock-change negative">-0.30%</span>
+            </div>
+        </div>
+        <span class='signal-tag'>KD黃金交叉</span>
+        <div class="stock-metrics">
+        <div class="metric">
+            <div class="metric-label">KD</div>
+            <div class="metric-value">K=75.0 D=60.5</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA20</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA60</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">支撐/壓力</div>
+            <div class="metric-value">0.0 / 0.0</div>
+        </div></div>
+        <div class="recommendation bullish">🟡 輕偏多（KD偏多）</div>
+    </div>
+    <div class="stock-card bullish">
+        <div class="stock-header">
+            <div>
+                <span class="stock-name">緯穎</span>
+                <span class="stock-code">(6669)</span>
+                <span class="sector-tag">伺服器</span>
+            </div>
+            <div>
+                <span class="stock-price">3580.00</span>
+                <span class="stock-change positive">+10.00%</span>
+            </div>
+        </div>
+        <span class='signal-tag'>KD黃金交叉</span> <span class='signal-tag'>動能(+0.3%)</span>
+        <div class="stock-metrics">
+        <div class="metric">
+            <div class="metric-label">KD</div>
+            <div class="metric-value">K=43.1 D=33.2</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA20</div>
+            <div class="metric-value">3687.25</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">MA60</div>
+            <div class="metric-value">N/A</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">支撐/壓力</div>
+            <div class="metric-value">3290.0 / 4220.0</div>
+        </div></div>
+        <div class="recommendation bullish">🟡 輕偏空（MACD偏空）</div>
+    </div>
+        </div>
+        
+        <div class="footer">
+            <p>報告時間：2026-04-09 09:36:43 ｜ 資料來源：FinMind</p>
+            <p style="margin-top:6px;">技術篩選：KD·MACD·均線·量能 ｜ <a href="https://github.com/heymaxclaw-coder/tw-stock-daily-report">GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>
