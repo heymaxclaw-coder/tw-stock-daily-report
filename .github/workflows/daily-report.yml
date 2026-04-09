@@ -7,10 +7,9 @@ permissions:
 
 on:
   schedule:
-    # 每天 08:30 台灣時間 (00:30 UTC)
     - cron: '30 0 * * 1-5'
-  workflow_dispatch:  # 手動觸發
-  push:  # 每次 push 都生成報告
+  workflow_dispatch:
+  push:
 
 jobs:
   generate-report:
@@ -34,23 +33,12 @@ jobs:
         run: |
           cd scripts
           python3 generate_html.py
-      
-      - name: Move HTML to root
-        run: |
-          mv scripts/../index.html ./index.html || mv index.html ./index.html
-      
-      - name: Commit and push
-        run: |
-          git config --local user.email "openclaw@heymaxclaw"
-          git config --local user.name "OpenClaw Bot"
-          git add -A
-          git diff --staged --quiet && echo "No changes" || git commit -m "Update daily report: $(date +'%Y-%m-%d %H:%M')"
-          git push
+          ls -la ..
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '..'
       
       - name: Deploy to GitHub Pages
         id: deployment
