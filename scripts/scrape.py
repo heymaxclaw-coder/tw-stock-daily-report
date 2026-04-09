@@ -132,8 +132,8 @@ def get_stock_list_info() -> List[Dict]:
         {"code": "6251", "name": "迎廣", "sector": "機殼"},
         {"code": "3010", "name": "華票", "sector": "金融"},
         {"code": "2886", "name": "兆豐金", "sector": "金融"},
-        {"code": "0050", "name": "元大台灣50", "sector": "ETF"},
-        {"code": "0056", "name": "元大高股息", "sector": "ETF"},
+        {"code": "2891", "name": "中信金", "sector": "金融"},
+        {"code": "3034", "name": "聯詠", "sector": "IC設計"},
     ]
 
 def get_taiex_data(days: int = 30) -> Dict:

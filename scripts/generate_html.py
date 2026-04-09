@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-台股每日技術分析 - HTML 生成器
-產生漂亮的日報 HTML 頁面
+台股每日技術分析 - HTML 生成器 v2.0
+更好的手機適配 + ETF 修復
 """
 
 import json
@@ -9,121 +9,91 @@ import os
 from datetime import datetime
 from typing import Dict, List
 
-# 匯入分析模組
 from analyze import analyze_market, analyze_stock, get_stock_list_info
 
-# HTML 模板
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>台股每日技術分析 {date}</title>
     <style>
-        * {{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }}
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             color: #e0e0e0;
-            padding: 20px;
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.5;
         }}
         
-        .container {{
-            max-width: 900px;
-            margin: 0 auto;
-        }}
+        .container {{ max-width: 900px; margin: 0 auto; }}
         
         .header {{
             text-align: center;
-            padding: 30px 0;
+            padding: 20px 0;
             border-bottom: 2px solid #0f3460;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }}
         
         .header h1 {{
-            font-size: 2.2em;
+            font-size: 1.4em;
             color: #fff;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
         }}
         
         .header .date {{
             color: #94a3b8;
-            font-size: 1.1em;
+            font-size: 0.85em;
         }}
         
         .section {{
             background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 25px;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1);
         }}
         
         .section-title {{
-            font-size: 1.3em;
+            font-size: 1em;
             color: #fff;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }}
         
         .market-overview {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
         }}
         
         .stat-card {{
             background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 14px 10px;
             text-align: center;
         }}
         
-        .stat-label {{
-            color: #94a3b8;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }}
-        
-        .stat-value {{
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #fff;
-        }}
-        
-        .stat-change {{
-            font-size: 1em;
-            margin-top: 5px;
-        }}
-        
+        .stat-label {{ color: #94a3b8; font-size: 0.75em; margin-bottom: 6px; }}
+        .stat-value {{ font-size: 1.2em; font-weight: bold; color: #fff; }}
+        .stat-change {{ font-size: 0.8em; margin-top: 4px; }}
         .positive {{ color: #ef4444; }}
         .negative {{ color: #22c55e; }}
         
-        .stock-list {{
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }}
+        .stock-list {{ display: flex; flex-direction: column; gap: 12px; }}
         
         .stock-card {{
             background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 20px;
-            border-left: 4px solid #3b82f6;
+            border-radius: 10px;
+            padding: 14px;
+            border-left: 3px solid #3b82f6;
         }}
-        
         .stock-card.bullish {{ border-left-color: #22c55e; }}
         .stock-card.bearish {{ border-left-color: #ef4444; }}
         .stock-card.neutral {{ border-left-color: #eab308; }}
@@ -132,102 +102,80 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 6px;
         }}
         
-        .stock-name {{
-            font-size: 1.2em;
+        .stock-name {{ font-size: 1em; font-weight: bold; color: #fff; }}
+        .stock-code {{ color: #64748b; font-size: 0.8em; margin-left: 6px; }}
+        
+        .stock-price {{
+            font-size: 1.1em;
             font-weight: bold;
             color: #fff;
         }}
-        
-        .stock-code {{
-            color: #64748b;
-            font-size: 0.9em;
-            margin-left: 10px;
-        }}
-        
-        .stock-price {{
-            font-size: 1.4em;
-            font-weight: bold;
-        }}
-        
-        .stock-change {{
-            font-size: 0.9em;
-            margin-left: 10px;
-        }}
+        .stock-change {{ font-size: 0.8em; margin-left: 8px; }}
         
         .stock-metrics {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
         }}
         
-        .metric {{
-            background: rgba(0,0,0,0.2);
-            padding: 12px;
-            border-radius: 8px;
-        }}
-        
-        .metric-label {{
-            color: #64748b;
-            font-size: 0.8em;
-            margin-bottom: 5px;
-        }}
-        
-        .metric-value {{
-            color: #fff;
-            font-weight: 600;
-        }}
+        .metric {{ background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; }}
+        .metric-label {{ color: #64748b; font-size: 0.7em; margin-bottom: 3px; }}
+        .metric-value {{ color: #fff; font-weight: 600; font-size: 0.9em; }}
         
         .recommendation {{
-            padding: 12px 16px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
             font-weight: 600;
+            font-size: 0.85em;
             display: inline-block;
         }}
-        
-        .recommendation.positive {{
-            background: rgba(34,197,94,0.2);
-            color: #22c55e;
-        }}
-        
-        .recommendation.negative {{
-            background: rgba(239,68,68,0.2);
-            color: #ef4444;
-        }}
-        
-        .recommendation.neutral {{
-            background: rgba(234,179,8,0.2);
-            color: #eab308;
-        }}
+        .recommendation.positive {{ background: rgba(34,197,94,0.2); color: #22c55e; }}
+        .recommendation.negative {{ background: rgba(239,68,68,0.2); color: #ef4444; }}
+        .recommendation.neutral {{ background: rgba(234,179,8,0.2); color: #eab308; }}
         
         .footer {{
             text-align: center;
-            padding: 30px 0;
+            padding: 20px 0;
             color: #64748b;
-            font-size: 0.9em;
+            font-size: 0.75em;
         }}
-        
-        .footer a {{
-            color: #3b82f6;
-            text-decoration: none;
-        }}
+        .footer a {{ color: #3b82f6; text-decoration: none; }}
         
         .error-msg {{
             background: rgba(239,68,68,0.1);
             border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 14px;
             text-align: center;
             color: #ef4444;
+            font-size: 0.9em;
         }}
         
-        @media (max-width: 600px) {{
-            .header h1 {{ font-size: 1.6em; }}
-            .stat-value {{ font-size: 1.4em; }}
-            .stock-header {{ flex-direction: column; align-items: flex-start; }}
+        .sector-tag {{
+            background: rgba(59,130,246,0.2);
+            color: #60a5fa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            margin-left: 8px;
+        }}
+        
+        @media (max-width: 480px) {{
+            body {{ padding: 8px; font-size: 13px; }}
+            .header h1 {{ font-size: 1.2em; }}
+            .section {{ padding: 12px; margin-bottom: 12px; }}
+            .stock-metrics {{
+                grid-template-columns: repeat(3, 1fr);
+            }}
+            .metric {{ padding: 8px; }}
+            .metric-label {{ font-size: 0.65em; }}
+            .metric-value {{ font-size: 0.85em; }}
         }}
     </style>
 </head>
@@ -249,154 +197,124 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
         
         <div class="footer">
-            <p>資料來源：台灣證券交易所 ｜ 分析僅供參考，不構成投資建議</p>
-            <p>Generated by <a href="#">台股分析系統</a> with ❤️</p>
+            <p>報告時間：{datetime} ｜ 資料來源：FinMind + TWSE</p>
+            <p style="margin-top:6px;">技術指標：KD、MACD、MA、RSI ｜ <a href="{repo_url}">GitHub</a></p>
         </div>
     </div>
 </body>
 </html>"""
 
-def format_market_section(market: Dict) -> str:
-    """格式化大盤區塊"""
-    if market.get("error"):
-        return f'<div class="error-msg">⚠️ {market["error"]}</div>'
-    
-    change_class = "positive" if market.get("change", 0) > 0 else "negative"
-    change_sign = "+" if market.get("change", 0) > 0 else ""
-    
-    return f'''
-    <div class="market-overview">
-        <div class="stat-card">
-            <div class="stat-label">加權指數</div>
-            <div class="stat-value">{market.get('close', 0):,.2f}</div>
-            <div class="stat-change {change_class}">
-                {change_sign}{market.get('change', 0):+.2f} ({change_sign}{market.get('change_pct', 0):+.2f}%)
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">KD 指標</div>
-            <div class="stat-value">K: {market.get('kd_k', 'N/A')}</div>
-            <div class="stat-change">D: {market.get('kd_d', 'N/A')}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">均線位置</div>
-            <div class="stat-value">MA5</div>
-            <div class="stat-change">{market.get('ma5', 'N/A'):,.2f}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">MA20 均線</div>
-            <div class="stat-value">MA20</div>
-            <div class="stat-change">{market.get('ma20', 'N/A'):,.2f}</div>
-        </div>
-    </div>
-    '''
+def format_change(change: float) -> str:
+    """格式化漲跌"""
+    if change is None:
+        return ""
+    sign = "+" if change > 0 else ""
+    color_class = "positive" if change > 0 else "negative"
+    return f"<span class='{color_class}'>{sign}{change:.2f}%</span>"
 
-def format_stock_card(analysis: Dict) -> str:
-    """格式化個股卡片"""
-    if analysis.get("error"):
-        return f'''
-        <div class="stock-card neutral">
-            <div class="stock-name">{analysis['code']} {analysis['name']}</div>
-            <div class="error-msg">⚠️ {analysis['error']}</div>
-        </div>
-        '''
+def render_stock(stock_data: dict) -> str:
+    """render一支股票的卡片"""
+    code = stock_data.get("code", "")
+    name = stock_data.get("name", "")
+    sector = stock_data.get("sector", "")
+    price = stock_data.get("price")
+    change = stock_data.get("change")
+    metrics = stock_data.get("metrics", {})
+    signal = stock_data.get("signal", "neutral")
+    recommendation = stock_data.get("recommendation", "")
     
-    # 根據建議分類
-    rec = analysis.get("recommendation", "")
-    if "偏多" in rec:
-        card_class = "bullish"
-        rec_class = "positive"
-    elif "偏空" in rec:
-        card_class = "bearish"
-        rec_class = "negative"
-    else:
-        card_class = "neutral"
-        rec_class = "neutral"
+    card_class = "bullish" if signal == "bullish" else "bearish" if signal == "bearish" else "neutral"
     
-    change = analysis.get("change", 0)
-    change_class = "positive" if change > 0 else "negative"
-    change_sign = "+" if change > 0 else ""
+    price_str = f"{price:.2f}" if price else "N/A"
     
-    return f'''
+    metrics_html = ""
+    for label, value in metrics.items():
+        metrics_html += f"""
+        <div class="metric">
+            <div class="metric-label">{label}</div>
+            <div class="metric-value">{value}</div>
+        </div>"""
+    
+    return f"""
     <div class="stock-card {card_class}">
         <div class="stock-header">
             <div>
-                <span class="stock-name">{analysis['name']}</span>
-                <span class="stock-code">({analysis['code']})</span>
+                <span class="stock-name">{name}</span>
+                <span class="stock-code">({code})</span>
+                <span class="sector-tag">{sector}</span>
             </div>
             <div>
-                <span class="stock-price">{analysis.get('close', 0):.2f}</span>
-                <span class="stock-change {change_class}">{change_sign}{change:+.2f}</span>
+                <span class="stock-price">{price_str}</span>
+                <span class="stock-change">{format_change(change)}</span>
             </div>
         </div>
-        <div class="stock-metrics">
-            <div class="metric">
-                <div class="metric-label">KD 判斷</div>
-                <div class="metric-value">K: {analysis.get('kd_k', 'N/A')} / D: {analysis.get('kd_d', 'N/A')}</div>
-            </div>
-            <div class="metric">
-                <div class="metric-label">KD 信號</div>
-                <div class="metric-value">{analysis.get('kd_signal', 'N/A')}</div>
-            </div>
-            <div class="metric">
-                <div class="metric-label">MACD 信號</div>
-                <div class="metric-value">{analysis.get('macd_signal', 'N/A')}</div>
-            </div>
-            <div class="metric">
-                <div class="metric-label">支撐 / 壓力</div>
-                <div class="metric-value">{analysis.get('support', 'N/A')} / {analysis.get('resistance', 'N/A')}</div>
-            </div>
-        </div>
-        <div class="recommendation {rec_class}">{analysis.get('recommendation', 'N/A')}</div>
-    </div>
-    '''
+        <div class="stock-metrics">{metrics_html}</div>
+        <div class="recommendation {card_class}">{recommendation}</div>
+    </div>"""
 
-def generate_report(output_path: str = "index.html"):
-    """生成完整報告"""
-    print("=== 生成台股分析報告 ===\n")
+def render_market(market_data: dict) -> str:
+    """render大盤資訊"""
+    if not market_data or not market_data.get("data"):
+        return '<div class="error-msg">⚠️ 大盤資料取得失敗，請稍後再試</div>'
     
-    # 分析大盤
-    print("📊 分析大盤...")
-    market = analyze_market()
+    data = market_data["data"]
+    index_name = data.get("name", "加權指數")
+    index_value = data.get("value")
+    index_change = data.get("change")
+    index_change_pct = data.get("change_pct")
     
-    # 分析個股
-    print("📈 分析個股...")
-    watchlist = get_stock_list_info()
-    stock_results = []
+    value_str = f"{index_value:,.0f}" if index_value else "N/A"
+    change_str = f"{index_change:+,.0f}" if index_change else ""
+    pct_str = f"{index_change_pct:+.2f}%" if index_change_pct else ""
     
-    for stock in watchlist:
-        print(f"  分析 {stock['code']} {stock['name']}...")
-        analysis = analyze_stock(stock["code"], stock["name"])
-        stock_results.append(analysis)
+    color_class = "positive" if (index_change or 0) > 0 else "negative"
     
-    # 生成 HTML
-    print("\n🎨 生成 HTML...")
+    return f"""
+    <div class="market-overview">
+        <div class="stat-card">
+            <div class="stat-label">{index_name}</div>
+            <div class="stat-value">{value_str}</div>
+            <div class="stat-change {color_class}">{change_str} ({pct_str})</div>
+        </div>
+    </div>"""
+
+def generate_html(stocks: List[dict], market: dict = None, output_path: str = None):
+    """生成完整 HTML"""
+    now = datetime.now()
+    date_str = now.strftime("%Y年%m月%d日")
+    time_str = now.strftime("%H:%M:%S")
+    datetime_str = now.strftime("%Y-%m-%d %H:%M:%S")
     
-    # 格式化大盤
-    market_content = format_market_section(market)
+    # render 個股
+    stocks_content = ""
+    for stock in stocks:
+        if stock.get("price") or stock.get("data"):
+            stocks_content += render_stock(stock)
     
-    # 格式化個股
-    stocks_content = "\n".join([format_stock_card(s) for s in stock_results])
+    if not stocks_content:
+        stocks_content = '<div class="error-msg">⚠️ 個股資料取得失敗</div>'
     
-    # 填充模板
+    # render 大盤
+    market_content = render_market(market or {})
+    
     html = HTML_TEMPLATE.format(
-        date=datetime.now().strftime("%Y-%m-%d"),
-        time=datetime.now().strftime("%H:%M:%S"),
+        date=date_str,
+        time=time_str,
+        datetime=datetime_str,
         market_content=market_content,
-        stocks_content=stocks_content
+        stocks_content=stocks_content,
+        repo_url="https://github.com/heymaxclaw-coder/tw-stock-daily-report"
     )
     
-    # 寫入檔案
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+    if output_path:
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html)
     
-    print(f"\n✅ 報告已生成：{output_path}")
     return html
 
-def main():
-    output = os.path.join(os.path.dirname(__file__), "..", "index.html")
-    generate_report(output)
-    print(f"\n打開 {output} 查看報告")
-
 if __name__ == "__main__":
-    main()
+    from analyze import main as analyze_main
+    stocks, market = analyze_main()
+    output = os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html")
+    generate_html(stocks, market, output)
+    print(f"✅ 報告已生成：{output}")
