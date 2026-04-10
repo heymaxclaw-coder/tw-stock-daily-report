@@ -268,6 +268,8 @@ CANDIDATE_POOL = [
     {"code": "2379", "name": "瑞昱", "sector": "IC設計"},
     {"code": "3545", "name": "旭隼", "sector": "UPS"},
     {"code": "6669", "name": "緯穎", "sector": "伺服器"},
+    {"code": "3211", "name": "順達", "sector": "EMS"},
+    {"code": "1591", "name": "駿吉-KY", "sector": "电机"},
 ]
 
 def screen_stocks(top_n: int = 5) -> List[Dict]:
