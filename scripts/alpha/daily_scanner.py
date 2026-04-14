@@ -374,6 +374,7 @@ def daily_scan():
         # 計算權重總分
         # 技術 30% + 營收 25% + 情緒 15% + 基本面 15% + 法人 15%
         total = (
+            
             tech.get("score", 0) * 0.30 +
             rev.get("score", 0) * 0.25 +
             sentiment.get("score", 0) * 0.15 +
@@ -506,3 +507,28 @@ if __name__ == "__main__":
     report = daily_scan()
     validate_signals()
     show_accuracy()
+
+# ====== Minervini Alpha（v5.0 新增）======
+def get_minervini_alpha(stock):
+    """Mark Minervini 超級績效策略"""
+    prices = get_price_data(stock, 300)
+    if not prices or len(prices) < 180:
+        return {"score": 0, "signal": "neutral", "details": "資料不足"}
+    
+    closes = [float(p.get("close", 0)) for p in prices]
+    highs = [float(p.get("max", 0)) for p in prices]
+    lows = [float(p.get("min", 0)) for p in prices]
+    vols = [int(p.get("Trading_Volume", 0)) for p in prices]
+    
+    ma50 = sum(closes[-50:]) / 50
+    ma150 = sum(closes[-150:]) / 150
+    ma200 = sum(closes[-200:]) / 200
+    
+    high52w = max(highs[-250:]) if len(highs) >= 250 else max(highs)
+    low52w = min(lows[-250:]) if len(lows) >= 250 else min(lows)
+    
+    current = closes[-1]
+    vol = vols[-1]
+    
+    score = 0
+    details = []
